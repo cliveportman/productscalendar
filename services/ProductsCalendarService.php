@@ -31,6 +31,29 @@ class ProductsCalendarService extends BaseApplicationComponent
                 
     }
 
+    public function getVariantsSingleDay($day, $showDisabledProducts = FALSE, $productTypes)
+    {
+        /*
+        RETURNS
+        xxx.products // an array of product objects
+        */
+
+        if (strlen($productTypes)) {
+            // get all the products that match the date
+            // including disabled ones if the showDisabledProducts var is given
+            $criteria = craft()->elements->getCriteria('Commerce_Variant');
+            $criteria->type  = $productTypes;
+            if($showDisabledProducts ==  TRUE) $criteria->status = 'disabled, enabled';
+            $criteria->eventDate = array('and', '>= ' . $day[0]->format('Y-m-d') . ' 00:00:00', '<= ' . $day[0]->format('Y-m-d') . ' 23:59:59');
+            $products =  $criteria->find();
+            return $products;
+        } else {
+            throw new Exception('productTypes var cannot be empty');
+        }
+
+                
+    }
+
     public function getProductsMultiDay($calendarDays, $showDisabledProducts = FALSE, $productTypes)
     {
         /*
@@ -83,6 +106,64 @@ class ProductsCalendarService extends BaseApplicationComponent
 
             }
             return $dates;
+        } else {
+            throw new Exception('productTypes var cannot be empty');
+        }
+                
+    }
+
+    public function getVariantsMultiDay($calendarDays, $showDisabledProducts = FALSE, $productTypes)
+    {
+        /*
+        RETURNS
+        xxx.firstDay // a date object for the first day
+        xxx.lastDay // a date object for the last day
+        xxx.calendarDays // an array of date objects
+        xxx.productDays // an array of objects containing:
+            xxx.productDays.date // a date object
+            xxx.productDays.products // an array of product objects
+        */
+
+        if (strlen($productTypes)) {
+            $firstDay = $calendarDays->days[0];
+            $lastDay = $calendarDays->days[(count($calendarDays->days) -1)];
+
+            if ($showDisabledProducts == TRUE) {
+                $variants = craft()->elements->getCriteria('Commerce_Variant', array('type' => $productTypes, 'eventDate' => array('and', '>= ' . $firstDay->format('Y-m-d') . ' 00:00:00', '<= ' . $lastDay->format('Y-m-d') . ' 23:59:59'), 'limit' => NULL, 'status' => 'disabled, enabled'));
+            } else {
+                $variants = craft()->elements->getCriteria('Commerce_Variant', array('type' => $productTypes, 'eventDate' => array('and', '>= ' . $firstDay->format('Y-m-d') . ' 00:00:00', '<= ' . $lastDay->format('Y-m-d') . ' 23:59:59'), 'limit' => NULL));
+            }
+
+            // We're returning the firstDay, lastDay, original calendar days
+            // and product days containing the day and array of products on that day 
+            $days = new \stdClass;
+            $days->firstDay = $firstDay;
+            $days->lastDay = $lastDay;
+            $days->calendarDays = $calendarDays;
+            $days->productDays = [];
+
+            foreach ($calendarDays->days as $day) {
+                
+                $productDay = new \stdClass;
+                $productDay->date = $day;
+                $productDay->variants = [];
+
+                // loop through the products looking for a date match
+                foreach ($variants as $variant) {                
+                    if ($variant->eventDate == $day) {
+                        array_push($productDay->variants, $variant);
+                    }            
+                }
+
+                // sort the returned products (use 24hr clock!)
+                // requires PHP7 for this usort function to work with date objects
+                @usort($productDay->variants, function($a, $b) {
+                    return $a->startTime->format('Hi') - $b->startTime->format('Hi');
+                });  
+                array_push($days->productDays, $productDay);
+
+            }
+            return $days;
         } else {
             throw new Exception('productTypes var cannot be empty');
         }
