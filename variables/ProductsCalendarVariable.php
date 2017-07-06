@@ -21,14 +21,14 @@ class ProductsCalendarVariable
 
     public function getProducts($options = array())
     {
-        $calendarDays = craft()->productsCalendar->getDays($options);
+        $calendarDays = craft()->productsCalendar_utilities->getDays($options);
 
         if ($options['calendarLength'] == 'day') {
             /*
             RETURNS
             xxx.products // an array of product objects
             */
-            $calendarProducts = craft()->productsCalendar->getProductsSingleDay($calendarDays->days, $options['showDisabledProducts'] = '', $options['productTypes']);
+            $calendarProducts = craft()->productsCalendar_products->getProductsSingleDay($calendarDays->days, $options['showDisabledProducts'] = '', $options['productTypes']);
 
         } else {
             /*
@@ -40,7 +40,7 @@ class ProductsCalendarVariable
                 xxx.productDays.date // a date object
                 xxx.productDays.products // an array of product objects
             */
-            $calendarProducts = craft()->productsCalendar->getProductsMultiDay($calendarDays, $options['showDisabledProducts'] = '', $options['productTypes']);
+            $calendarProducts = craft()->productsCalendar_products->getProductsMultiDay($calendarDays, $options['showDisabledProducts'] = '', $options['productTypes']);
         }
 
         return $calendarProducts;
@@ -49,14 +49,14 @@ class ProductsCalendarVariable
 
     public function getVariants($options = array())
     {
-        $calendarDays = craft()->productsCalendar->getDays($options);
+        $calendarDays = craft()->productsCalendar_utilities->getDays($options);
 
         if ($options['calendarLength'] == 'day') {
             /*
             RETURNS
             xxx.products // an array of product objects
             */
-            $calendarProducts = craft()->productsCalendar->getVariantsSingleDay($calendarDays->days, $options['showDisabledProducts'] = '', $options['productTypes']);
+            $calendarProducts = craft()->productsCalendar_products->getVariantsSingleDay($calendarDays->days, $options['showDisabledProducts'], $options['productTypes']);
 
         } else {
             /*
@@ -68,7 +68,7 @@ class ProductsCalendarVariable
                 xxx.productDays.date // a date object
                 xxx.productDays.products // an array of product objects
             */
-            $calendarProducts = craft()->productsCalendar->getVariantsMultiDay($calendarDays, $options['showDisabledProducts'] = '', $options['productTypes']);
+            $calendarProducts = craft()->productsCalendar_products->getVariantsMultiDay($calendarDays, $options['showDisabledProducts'], $options['productTypes']);
         }//craft()->giftVouchers_discount->updateDiscount($order);
 
         return $calendarProducts;
