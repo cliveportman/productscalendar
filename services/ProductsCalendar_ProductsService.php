@@ -91,7 +91,7 @@ class ProductsCalendar_ProductsService extends BaseApplicationComponent
             // requires PHP7 for this usort function to work with date objects
             // but it's buggy so suppress error messages using @
             @usort($dayWithElement->products, function($a, $b) {
-                return $a->startTime->format('Hi') - $b->startTime->format('Hi');
+                return $a->eventDate->format('Hi') - $b->eventDate->format('Hi');
             });  
             array_push($days->calendarDaysWithCommerceElements, $dayWithElement);
 
@@ -137,7 +137,7 @@ class ProductsCalendar_ProductsService extends BaseApplicationComponent
             // requires PHP7 for this usort function to work with date objects
             // but it's buggy so suppress error messages using @
             @usort($dayWithElement->variants, function($a, $b) {
-                return $a->startTime->format('Hi') - $b->startTime->format('Hi');
+                return $a->eventDate->format('Hi') - $b->eventDate->format('Hi');
             });  
             array_push($days->calendarDaysWithCommerceElements, $dayWithElement);
 
