@@ -115,6 +115,9 @@ class ProductsCalendar_ProductsService extends BaseApplicationComponent
         $days = craft()->productsCalendar_products->prepareDaysObject($productTypes, $calendarDays);
         $variants = craft()->productsCalendar_products->getElements('Commerce_Variant', $productTypes, $calendarDays);
 
+
+        
+
         // show disabled products of necessary
         $status = ['live'];            
         if ($showDisabledProducts) array_push($status, 'disabled');
@@ -128,9 +131,9 @@ class ProductsCalendar_ProductsService extends BaseApplicationComponent
             // loop through the products looking for a date match
             // and checking the status of the parent product
             foreach ($variants as $variant) {
-                if ($variant->eventDate == $day && in_array($variant->product->status, $status)) {
+                if ($variant->eventDate->format('ymd') == $day->format('ymd') && in_array($variant->product->status, $status)) {
                     array_push($dayWithElement->variants, $variant);
-                }            
+                } 
             }
 
             // sort the returned products (use 24hr clock!)
@@ -142,6 +145,8 @@ class ProductsCalendar_ProductsService extends BaseApplicationComponent
             array_push($days->calendarDaysWithCommerceElements, $dayWithElement);
 
         }
+
+                
         return $days;
                 
     }

@@ -7,7 +7,7 @@ namespace Craft;
  * @author    Clive Portman <clive@cliveportman.co.uk>
  * @copyright Copyright (c) 2016, Clive Portman.
  * @license   MIT
- * @version   0.1
+ * @version   0.4
  */
 
 class ProductsCalendarPlugin extends BasePlugin
@@ -19,7 +19,7 @@ class ProductsCalendarPlugin extends BasePlugin
 
     function getVersion()
     {
-        return '0.3';
+        return '0.5';
     }
 
     function getDeveloper()
